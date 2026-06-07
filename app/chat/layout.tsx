@@ -93,7 +93,7 @@ export default function ChatLayout({
 
   return (
     <AppShell
-      title={isCompanyAccount ? 'Conversas da empresa' : 'Conversas'}
+      title={isCompanyAccount ? 'Conversas e IA' : 'Conversas e IA'}
       navItems={navItems}
       activeNavId={activeNav}
       user={user ? {

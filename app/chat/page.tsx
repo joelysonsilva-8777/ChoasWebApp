@@ -4,10 +4,12 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useAuth } from '../../lib/useAuth';
 import { ChatServiceTS, ChatMessage, Conversation } from '../../lib/chatService';
 import AvatarDisplay from '../../components/AvatarDisplay';
+import AiStudyChatPanel from '../../components/AiStudyChatPanel';
 import { DEFAULT_AVATAR } from '../../lib/avatarService';
 import { STICKER_ASSETS, resolveStickerAssetSource } from '../../lib/chatMedia';
 import {
   ArrowLeft,
+  Bot,
   MessageCircle,
   Phone,
   Video,
@@ -22,6 +24,7 @@ import {
   X,
   FileText,
   Smile,
+  Sparkles,
 } from 'lucide-react';
 
 type PendingAttachment = {
@@ -84,6 +87,7 @@ export default function ChatPage() {
   const [pendingAttachments, setPendingAttachments] = useState<PendingAttachment[]>([]);
   const [showStickerPicker, setShowStickerPicker] = useState(false);
   const [mobileView, setMobileView] = useState<'list' | 'chat'>('list');
+  const [activePanel, setActivePanel] = useState<'ai' | 'conversation'>('ai');
 
   const selectedConversationContactName = useMemo(() => {
     if (!selectedConversation || !user) {
@@ -107,12 +111,6 @@ export default function ChatPage() {
         const loadedConversations = await service.loadConversationsAsync();
         setConversations(loadedConversations);
         setLoadingConversations(false);
-
-        if (loadedConversations.length > 0) {
-          const initialConversation = loadedConversations[0];
-          setSelectedConversation(initialConversation);
-          void loadConversationMessages(initialConversation, service);
-        }
       } catch (error) {
         console.error('Erro ao carregar chat:', error);
       } finally {
@@ -151,10 +149,16 @@ export default function ChatPage() {
   };
 
   const handleSelectConversation = async (conversation: Conversation) => {
+    setActivePanel('conversation');
     setSelectedConversation(conversation);
     setMobileView('chat');
     setMessages([]);
     await loadConversationMessages(conversation);
+  };
+
+  const handleSelectAiChat = () => {
+    setActivePanel('ai');
+    setMobileView('chat');
   };
 
   const handleAttachmentSelection = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -378,6 +382,32 @@ export default function ChatPage() {
               </div>
             </div>
 
+            <button
+              type="button"
+              onClick={handleSelectAiChat}
+              className={`mb-4 w-full overflow-hidden rounded-3xl border p-3 text-left shadow-lg shadow-black/10 transition hover:border-cyan-300/70 hover:bg-cyan-300/10 ${
+                activePanel === 'ai'
+                  ? 'border-cyan-300/50 bg-cyan-300/10'
+                  : 'border-white/10 bg-white/5'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-300 via-sky-500 to-emerald-300 text-slate-950 shadow-lg shadow-cyan-950/30">
+                  <Bot size={22} />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <p className="truncate text-sm font-bold text-white">Codex IA</p>
+                    <span className="rounded-full bg-white/10 px-2 py-0.5 text-[11px] font-semibold text-cyan-100">
+                      OpenAI
+                    </span>
+                  </div>
+                  <p className="mt-1 truncate text-xs text-slate-300">Estudos, projetos e suporte do Choas</p>
+                </div>
+                <Sparkles size={18} className="shrink-0 text-cyan-200" />
+              </div>
+            </button>
+
             <div className="relative">
               <Search className="absolute left-3 top-3 text-slate-400" size={18} />
               <input
@@ -413,7 +443,7 @@ export default function ChatPage() {
                     key={conversation.conversationId}
                     onClick={() => handleSelectConversation(conversation)}
                     className={`w-full border-b border-white/5 px-4 py-4 text-left transition hover:bg-white/5 ${
-                      selectedConversation?.conversationId === conversation.conversationId ? 'bg-blue-500/10' : ''
+                      activePanel === 'conversation' && selectedConversation?.conversationId === conversation.conversationId ? 'bg-blue-500/10' : ''
                     }`}
                   >
                     <div className="flex items-start gap-3">
@@ -449,6 +479,16 @@ export default function ChatPage() {
         <section
           className={`${isMobileChatView ? 'flex' : 'hidden lg:flex'} min-h-0 flex-1 flex-col overflow-hidden bg-slate-950/50 backdrop-blur-xl`}
         >
+          <div className={`${activePanel === 'ai' ? 'flex' : 'hidden'} h-full min-h-0 w-full`}>
+            <AiStudyChatPanel
+              userId={user.uid}
+              displayName={user.displayName || 'Usuario'}
+              showBackButton={isMobileChatView}
+              onBackToList={() => setMobileView('list')}
+            />
+          </div>
+
+          <div className={`${activePanel === 'conversation' && selectedConversation ? 'flex' : 'hidden'} h-full min-h-0 w-full flex-col`}>
           {selectedConversation ? (
             <>
               <div className="flex flex-col gap-4 border-b border-white/10 bg-slate-950/70 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
@@ -710,14 +750,17 @@ export default function ChatPage() {
                 </div>
               </div>
             </>
-          ) : (
+          ) : null}
+          </div>
+
+          {activePanel === 'conversation' && !selectedConversation ? (
             <div className="flex flex-1 items-center justify-center">
               <div className="text-center">
                 <MessageCircle size={64} className="mx-auto mb-4 text-slate-500" />
                 <p className="text-lg text-slate-200">Selecione uma conversa para começar</p>
               </div>
             </div>
-          )}
+          ) : null}
         </section>
       </div>
     </div>
