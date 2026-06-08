@@ -3,6 +3,8 @@
 import { useRouter } from 'next/navigation';
 import { AlertTriangle, ArrowLeft, Download, FileQuestion, Sparkles, MonitorSmartphone, Boxes } from 'lucide-react';
 
+const desktopDownloadUrl = 'https://mega.nz/file/usg13CSC#pAw8QsUnD1nCZiVGajsTYBgrOjgwvVTnxtarlKA-2yw';
+
 export default function FilesPage() {
   const router = useRouter();
 
@@ -32,14 +34,15 @@ export default function FilesPage() {
               </div>
 
               <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-                <button
-                  type="button"
-                  disabled
-                  className="inline-flex items-center justify-center gap-2 rounded-2xl bg-slate-950 px-5 py-4 font-semibold text-white shadow-lg shadow-slate-300 transition disabled:cursor-not-allowed disabled:bg-slate-400"
+                <a
+                  href={desktopDownloadUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 rounded-2xl bg-slate-950 px-5 py-4 font-semibold text-white shadow-lg shadow-slate-300 transition hover:-translate-y-0.5 hover:bg-slate-800 hover:shadow-slate-400"
                 >
                   <Download size={18} />
                   Baixe o Aplicativo para Windows aqui!!
-                </button>
+                </a>
                 <button
                   type="button"
                   onClick={() => router.push('/dashboard')}

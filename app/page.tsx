@@ -1,9 +1,13 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { onAuthStateChanged } from 'firebase/auth';
+import { Download } from 'lucide-react';
 import { auth } from '../lib/firebase';
+
+const desktopDownloadUrl = 'https://mega.nz/file/usg13CSC#pAw8QsUnD1nCZiVGajsTYBgrOjgwvVTnxtarlKA-2yw';
 
 const floatingChaoCharacters = [
   {
@@ -67,6 +71,7 @@ export default function Home() {
       <section className="relative overflow-hidden pb-16 sm:pb-24">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(56,189,248,0.18),_transparent_25%),radial-gradient(circle_at_bottom_right,_rgba(168,85,247,0.16),_transparent_20%)]" />
         <div className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-30" style={{ backgroundImage: 'url(/img/Hero_0.png)' }} />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-44 bg-gradient-to-b from-transparent via-slate-950/70 to-slate-950 sm:h-56" />
         <div className="relative mx-auto max-w-7xl px-4 pt-14 sm:px-6 sm:pt-20 lg:px-8 lg:pt-24">
           <div className="grid gap-8 xl:grid-cols-[1.05fr_0.95fr] xl:items-center">
             <div className="mx-auto max-w-2xl text-center xl:mx-0 xl:text-left">
@@ -235,6 +240,40 @@ export default function Home() {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-4 pb-20 sm:px-6 lg:px-8 lg:pb-24">
+        <div className="flex flex-col gap-6 border-t border-white/10 pt-8 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
+            <div className="flex h-24 w-24 flex-shrink-0 items-center justify-center rounded-[1.75rem] bg-white/5 ring-1 ring-white/10">
+              <Image
+                src="/img/ChoasICO.png"
+                alt="Ícone do Choas"
+                width={64}
+                height={64}
+                className="h-16 w-16 object-contain drop-shadow-[0_0_24px_rgba(34,211,238,0.35)]"
+              />
+            </div>
+            <div className="max-w-2xl">
+              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300 sm:text-sm">Choas Desktop</p>
+              <h2 className="mt-3 text-2xl font-bold tracking-tight text-white sm:text-3xl">
+                Baixe nosso aplicativo para desktop Windows.
+              </h2>
+              <p className="mt-3 text-sm leading-6 text-slate-300 sm:text-base">
+                Use a versão Windows para acessar as áreas completas que ainda estão sendo portadas para o Web.
+              </p>
+            </div>
+          </div>
+          <a
+            href={desktopDownloadUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex flex-shrink-0 items-center justify-center gap-2 rounded-full bg-cyan-500 px-6 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-cyan-500/20 transition hover:-translate-y-0.5 hover:bg-cyan-400"
+          >
+            <Download size={18} />
+            Baixar para Windows
+          </a>
         </div>
       </section>
 
