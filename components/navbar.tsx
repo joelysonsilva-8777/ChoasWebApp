@@ -56,7 +56,7 @@ export default function Navbar() {
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
         <Link href="/" className="inline-flex items-center gap-3 text-white transition hover:opacity-80">
           <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-500 to-indigo-600 shadow-lg shadow-cyan-500/20">
-            <img src="/img/tesseractICO.png" alt="Choas Logo" className="h-6 w-6" />
+            <img src="/img/ChoasICO.png" alt="Choas Logo" className="h-6 w-6" />
           </span>
           <span className="text-lg font-semibold tracking-tight">Choas</span>
         </Link>

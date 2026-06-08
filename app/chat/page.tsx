@@ -9,7 +9,6 @@ import { DEFAULT_AVATAR } from '../../lib/avatarService';
 import { STICKER_ASSETS, resolveStickerAssetSource } from '../../lib/chatMedia';
 import {
   ArrowLeft,
-  Bot,
   MessageCircle,
   Phone,
   Video,
@@ -26,6 +25,8 @@ import {
   Smile,
   Sparkles,
 } from 'lucide-react';
+
+const AI_AVATAR_SRC = '/img/ChoasICO.png';
 
 type PendingAttachment = {
   file: File;
@@ -392,8 +393,8 @@ export default function ChatPage() {
               }`}
             >
               <div className="flex items-center gap-3">
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-300 via-sky-500 to-emerald-300 text-slate-950 shadow-lg shadow-cyan-950/30">
-                  <Bot size={22} />
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-slate-950 p-1.5 shadow-lg shadow-cyan-950/30 ring-1 ring-cyan-100/60">
+                  <img src={AI_AVATAR_SRC} alt="Choas IA" className="h-full w-full object-contain" />
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">

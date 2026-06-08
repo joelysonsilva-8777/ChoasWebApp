@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   ArrowLeft,
-  Bot,
   BookOpen,
   ExternalLink,
   Loader,
@@ -21,6 +20,8 @@ import {
 import { buildAiStudyContextSummary, type AiStudyContextSummary } from '../lib/aiStudyContext';
 import { loadAllTeamWorkspaces, loadUserTeamWorkspaces, type TeamWorkspace } from '../lib/teamWorkspaceService';
 import { getUserProfileService, type UserProfile } from '../lib/userProfileService';
+
+const AI_AVATAR_SRC = '/img/ChoasICO.png';
 
 type VisibleAiMessage = {
   id: string;
@@ -50,6 +51,7 @@ const welcomeReply: AiChatReply = {
   ],
   steps: [],
   links: [],
+  codeBlocks: [],
   followUp: 'Traga uma dúvida de estudo, uma pesquisa ou algo sobre seus projetos.',
 };
 
@@ -105,6 +107,16 @@ function normalizeReply(value: unknown): AiChatReply {
           }))
           .slice(0, 5)
       : [],
+    codeBlocks: Array.isArray(data.codeBlocks)
+      ? data.codeBlocks
+          .filter((item) => item && typeof item.code === 'string' && Boolean(item.code.trim()))
+          .map((item) => ({
+            language: typeof item.language === 'string' ? item.language : '',
+            title: typeof item.title === 'string' ? item.title : 'Código',
+            code: item.code,
+          }))
+          .slice(0, 3)
+      : [],
     followUp: typeof data.followUp === 'string' ? data.followUp : '',
   };
 }
@@ -141,6 +153,16 @@ function buildHistory(messages: VisibleAiMessage[], nextUserMessage: VisibleAiMe
           ].filter(Boolean).join(' '),
     }))
     .filter((message) => message.content.trim());
+}
+
+function AiProfilePhoto({ size }: { size: 'sm' | 'md' }) {
+  const sizeClass = size === 'sm' ? 'h-9 w-9 rounded-2xl p-1' : 'h-12 w-12 rounded-2xl p-1.5';
+
+  return (
+    <span className={`flex shrink-0 items-center justify-center overflow-hidden bg-slate-950 shadow-lg shadow-cyan-950/25 ring-1 ring-cyan-100/60 ${sizeClass}`}>
+      <img src={AI_AVATAR_SRC} alt="Choas IA" className="h-full w-full object-contain" />
+    </span>
+  );
 }
 
 export default function AiStudyChatPanel({
@@ -344,8 +366,8 @@ export default function AiStudyChatPanel({
     return (
       <div className={`w-full rounded-3xl border p-4 text-slate-100 shadow-lg shadow-black/15 backdrop-blur ${accentClass}`}>
         <div className="flex items-start gap-3">
-          <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-300 via-sky-500 to-emerald-300 text-slate-950 shadow-lg shadow-cyan-950/20">
-            <Bot size={18} />
+          <div className="mt-0.5">
+            <AiProfilePhoto size="sm" />
           </div>
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
@@ -402,6 +424,22 @@ export default function AiStudyChatPanel({
           </div>
         )}
 
+        {reply.codeBlocks.length > 0 && (
+          <div className="mt-4 space-y-3 border-t border-white/10 pt-4">
+            {reply.codeBlocks.map((block, index) => (
+              <div key={`${block.title}-${index}`} className="overflow-hidden rounded-2xl border border-white/10 bg-slate-950/80">
+                <div className="flex items-center justify-between gap-3 border-b border-white/10 px-4 py-2.5">
+                  <span className="truncate text-xs font-semibold text-slate-200">{block.title || 'Código'}</span>
+                  {block.language ? <span className="rounded-full bg-white/10 px-2 py-0.5 text-[11px] text-cyan-100">{block.language}</span> : null}
+                </div>
+                <pre className="max-h-72 overflow-auto px-4 py-3 text-xs leading-5 text-slate-100">
+                  <code>{block.code}</code>
+                </pre>
+              </div>
+            ))}
+          </div>
+        )}
+
         {reply.followUp && (
           <div className="mt-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-3 py-2.5 text-sm leading-5 text-emerald-50">
             {reply.followUp}
@@ -426,9 +464,7 @@ export default function AiStudyChatPanel({
             </button>
           )}
 
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-300 via-sky-500 to-emerald-300 text-slate-950 shadow-lg shadow-cyan-950/30">
-            <Bot size={23} />
-          </div>
+          <AiProfilePhoto size="md" />
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
               <p className="truncate font-semibold text-white">Codex IA</p>

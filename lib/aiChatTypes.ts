@@ -6,6 +6,12 @@ export interface AiChatLink {
   note: string;
 }
 
+export interface AiChatCodeBlock {
+  language: string;
+  title: string;
+  code: string;
+}
+
 export interface AiChatReply {
   kind: AiChatReplyKind;
   title: string;
@@ -13,6 +19,7 @@ export interface AiChatReply {
   highlights: string[];
   steps: string[];
   links: AiChatLink[];
+  codeBlocks: AiChatCodeBlock[];
   followUp: string;
 }
 
@@ -24,7 +31,7 @@ export interface AiChatHistoryItem {
 export const AI_CHAT_RESPONSE_SCHEMA = {
   type: 'object',
   additionalProperties: false,
-  required: ['kind', 'title', 'summary', 'highlights', 'steps', 'links', 'followUp'],
+  required: ['kind', 'title', 'summary', 'highlights', 'steps', 'links', 'codeBlocks', 'followUp'],
   properties: {
     kind: {
       type: 'string',
@@ -83,6 +90,29 @@ export const AI_CHAT_RESPONSE_SCHEMA = {
         },
       },
     },
+    codeBlocks: {
+      type: 'array',
+      maxItems: 3,
+      items: {
+        type: 'object',
+        additionalProperties: false,
+        required: ['language', 'title', 'code'],
+        properties: {
+          language: {
+            type: 'string',
+            maxLength: 40,
+          },
+          title: {
+            type: 'string',
+            maxLength: 90,
+          },
+          code: {
+            type: 'string',
+            maxLength: 2000,
+          },
+        },
+      },
+    },
     followUp: {
       type: 'string',
       maxLength: 240,
@@ -97,5 +127,6 @@ export const AI_CHAT_EMPTY_REPLY: AiChatReply = {
   highlights: [],
   steps: [],
   links: [],
+  codeBlocks: [],
   followUp: '',
 };
